@@ -14,4 +14,6 @@ class MYPROJECT2_API AMyCharacter : public ACharacterBase
 {
 	GENERATED_BODY()
 	
+public:
+	AMyCharacter();
 };
