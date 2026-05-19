@@ -16,4 +16,10 @@ class MYPROJECT2_API AMyCharacter : public ACharacterBase
 	
 public:
 	AMyCharacter();
+
+	virtual void PossessedBy(AController* NewController) override;
+	virtual void OnRep_PlayerState() override;
+private:
+	void SetAbilitySystemAndAttributeSet();
+
 };

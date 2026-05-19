@@ -35,7 +35,6 @@ private:
 
 	void cursurTrace();
 
-	UPROPERTY(EditAnywhere, Category = "Input")
 	IIEnemyInterface* lastActor;
 
 	IIEnemyInterface* currentActor;

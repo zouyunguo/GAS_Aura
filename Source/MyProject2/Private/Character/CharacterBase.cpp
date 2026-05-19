@@ -20,4 +20,9 @@ void ACharacterBase::BeginPlay()
 
 }
 
+UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
 

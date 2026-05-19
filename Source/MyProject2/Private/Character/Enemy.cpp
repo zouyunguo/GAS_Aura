@@ -3,6 +3,8 @@
 
 #include "Character/Enemy.h"
 #include "Components/CapsuleComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 void AEnemy::Highlight()
 {
 	GetMesh()->SetRenderCustomDepth(true);
@@ -17,5 +19,16 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	GetCapsuleComponent()->SetCollisionProfileName(FName("BlockAll"));
+	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 
+}
+
+AEnemy::AEnemy()
+{
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>(TEXT("AttributeSet"));
+	
 }

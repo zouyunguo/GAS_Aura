@@ -2,7 +2,10 @@
 
 
 #include "Character/MyCharacter.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "AuraPlayerState.h"
 AMyCharacter::AMyCharacter()
 {
 	GetCharacterMovement()->bOrientRotationToMovement = true;
@@ -14,4 +17,28 @@ AMyCharacter::AMyCharacter()
 	bUseControllerRotationRoll = false;
 
 
+}
+
+void AMyCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	SetAbilitySystemAndAttributeSet();
+}
+
+void AMyCharacter::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+	SetAbilitySystemAndAttributeSet();
+
+}
+
+void AMyCharacter::SetAbilitySystemAndAttributeSet()
+{
+	//get playerstate and initialize the ability system component
+	AAuraPlayerState* playerstate = GetPlayerState<AAuraPlayerState>();
+
+	check(playerstate);
+	playerstate->GetAbilitySystemComponent()->InitAbilityActorInfo(playerstate, this);
+	AbilitySystemComponent = playerstate->GetAbilitySystemComponent();
+	AttributeSet = playerstate->GetAttributeSet();
 }

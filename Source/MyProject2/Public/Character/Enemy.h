@@ -14,6 +14,8 @@ UCLASS()
 class MYPROJECT2_API AEnemy : public ACharacterBase , public IIEnemyInterface
 {
 	GENERATED_BODY()
+
+	AEnemy();
 	
 	virtual void Highlight() override;
 	
