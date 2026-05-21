@@ -38,6 +38,7 @@ void AMyCharacter::SetAbilitySystemAndAttributeSet()
 	AAuraPlayerState* playerstate = GetPlayerState<AAuraPlayerState>();
 
 	check(playerstate);
+	//set the owner and avatar for the ability system component to the playerstate and character respectively
 	playerstate->GetAbilitySystemComponent()->InitAbilityActorInfo(playerstate, this);
 	AbilitySystemComponent = playerstate->GetAbilitySystemComponent();
 	AttributeSet = playerstate->GetAttributeSet();
