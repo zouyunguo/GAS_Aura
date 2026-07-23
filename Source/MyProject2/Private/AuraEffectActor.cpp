@@ -3,6 +3,8 @@
 
 #include "AuraEffectActor.h"
 #include "Components/SphereComponent.h"
+#include "AbilitySystemInterface.h"
+#include "AbilitySystem/AuraAttributeSet.h"
 // Sets default values
 AAuraEffectActor::AAuraEffectActor()
 {
@@ -18,6 +20,13 @@ AAuraEffectActor::AAuraEffectActor()
 
 void AAuraEffectActor::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	//TODO: Change this to apply a gameplay effect.
+	if (IAbilitySystemInterface* ASCINterface = Cast<IAbilitySystemInterface>(OtherActor)) {
+	const UAuraAttributeSet* AuraAttributeSet=	Cast<UAuraAttributeSet>(ASCINterface->GetAbilitySystemComponent()->GetAttributeSet(UAuraAttributeSet::StaticClass()));
+	UAuraAttributeSet* MutableAttributeSet = const_cast<UAuraAttributeSet*>(AuraAttributeSet);
+	MutableAttributeSet->SetHealth(AuraAttributeSet->GetHealth() + 25.0f);
+	Destroy();
+	}
 }
 
 void AAuraEffectActor::EndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
