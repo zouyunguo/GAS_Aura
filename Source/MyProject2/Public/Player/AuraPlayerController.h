@@ -35,7 +35,7 @@ private:
 
 	void cursurTrace();
 
-	IIEnemyInterface* lastActor;
+	TObjectPtr<IIEnemyInterface> lastActor ;
 
-	IIEnemyInterface* currentActor;
+	TObjectPtr<IIEnemyInterface> currentActor;
 };
