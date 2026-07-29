@@ -24,24 +24,25 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	SetAbilitySystemAndAttributeSet();
+	InitAbilityActorInfo();
 }
 
 void AMyCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-	SetAbilitySystemAndAttributeSet();
+	InitAbilityActorInfo();
 
 }
 
-void AMyCharacter::SetAbilitySystemAndAttributeSet()
+void AMyCharacter::InitAbilityActorInfo()
 {
 	//get playerstate and initialize the ability system component
 	AAuraPlayerState* playerstate = GetPlayerState<AAuraPlayerState>();
-
+ 
 	check(playerstate);
 	//set the owner and avatar for the ability system component to the playerstate and character respectively
 	playerstate->GetAbilitySystemComponent()->InitAbilityActorInfo(playerstate, this);
+	Cast<UAuraAbilitySystemComponent>(playerstate->GetAbilitySystemComponent())->AbilityActorInfoSet();
 	AbilitySystemComponent = playerstate->GetAbilitySystemComponent();
 	AttributeSet = playerstate->GetAttributeSet();
 

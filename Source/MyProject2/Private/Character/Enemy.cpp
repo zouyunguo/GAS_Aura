@@ -19,7 +19,13 @@ void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	GetCapsuleComponent()->SetCollisionProfileName(FName("BlockAll"));
-	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	InitAbilityActorInfo(); 
+
+}
+
+void AEnemy::InitAbilityActorInfo()
+{	AbilitySystemComponent->InitAbilityActorInfo(this, this);
+	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
 
 }
 
