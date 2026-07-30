@@ -9,6 +9,7 @@
 
 class UAbilitySystemComponent;
 class UAttributeSet;
+class UGameplayEffect;
 UCLASS(Abstract)
 class MYPROJECT2_API ACharacterBase : public ACharacter, public IAbilitySystemInterface
 {
@@ -34,4 +35,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
+	
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Attributes")
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttribute;
+	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Attributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+	void InitializePrimaryAttribute() const;
+	
+	void InitializeSecondaryAttributes() const;
 };
