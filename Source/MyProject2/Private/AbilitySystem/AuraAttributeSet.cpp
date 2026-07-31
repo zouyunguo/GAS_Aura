@@ -57,7 +57,7 @@ void UAuraAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, 
 		NewValue=FMath::Clamp(NewValue,0.f,GetMaxMana());
 	}else if (Attribute== GetMaxManaAttribute())
 	{
-		NewValue=FMath::Clamp(NewValue,0.f,GetMaxMana());
+		NewValue=FMath::Clamp(NewValue,0.f,NewValue);
 	}
 }
 

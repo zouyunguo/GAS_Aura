@@ -34,6 +34,11 @@ void AMyCharacter::OnRep_PlayerState()
 
 }
 
+int32 AMyCharacter::GetPlayerLevel()
+{
+	return GetPlayerState<AAuraPlayerState>()->GetPlayerLevel();
+}
+
 void AMyCharacter::InitAbilityActorInfo()
 {
 	//get playerstate and initialize the ability system component
@@ -52,7 +57,6 @@ void AMyCharacter::InitAbilityActorInfo()
 			AuraHud->InitOverlay(playerController, playerstate, AbilitySystemComponent, AttributeSet);
 		}
 	}
-	InitializePrimaryAttribute();
-	InitializeSecondaryAttributes();
+	InitializeAttributes();
 
 }

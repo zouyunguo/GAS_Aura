@@ -3,6 +3,7 @@
 
 #include "Character\CharacterBase.h"
 #include "AbilitySystemComponent.h"
+#include "AI/NavigationModifier.h"
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
@@ -24,25 +25,24 @@ void ACharacterBase::InitAbilityActorInfo()
 {
 }
 
-void ACharacterBase::InitializePrimaryAttribute() const
+
+
+void ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GE, float level)
 {
 	FGameplayEffectContextHandle ContextHandle= GetAbilitySystemComponent()->MakeEffectContext();
-	
-	FGameplayEffectSpecHandle SpecHandle=GetAbilitySystemComponent()->MakeOutgoingSpec(DefaultPrimaryAttribute,1.0f,ContextHandle);
-
-	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(),GetAbilitySystemComponent());
-	
-}
-
-void ACharacterBase::InitializeSecondaryAttributes() const
-{
-	FGameplayEffectContextHandle ContextHandle= GetAbilitySystemComponent()->MakeEffectContext();
-	FGameplayEffectSpecHandle SpecHandle=GetAbilitySystemComponent()->MakeOutgoingSpec(DefaultSecondaryAttributes,1.0f,ContextHandle);
-
+	ContextHandle.AddSourceObject(this);
+	FGameplayEffectSpecHandle SpecHandle=GetAbilitySystemComponent()->MakeOutgoingSpec(GE,level,ContextHandle);
 	GetAbilitySystemComponent()->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(),GetAbilitySystemComponent());
 	
 
 }
+void ACharacterBase::InitializeAttributes()
+{
+	ApplyEffectToSelf(DefaultPrimaryAttribute,1.f);
+	ApplyEffectToSelf(DefaultSecondaryAttributes,1.f);
+	ApplyEffectToSelf(DefaultVitalAttributes,1.f);
+}
+
 
 UAbilitySystemComponent* ACharacterBase::GetAbilitySystemComponent() const
 {

@@ -15,6 +15,12 @@ void AEnemy::UnHighlight()
 {
 	GetMesh()->SetRenderCustomDepth(false);
 }
+
+int32 AEnemy::GetPlayerLevel()
+{
+	return Level;
+}
+
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
@@ -26,7 +32,6 @@ void AEnemy::BeginPlay()
 void AEnemy::InitAbilityActorInfo()
 {	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-
 }
 
 AEnemy::AEnemy()
