@@ -3,6 +3,7 @@
 
 #include "Character\CharacterBase.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AI/NavigationModifier.h"
 // Sets default values
 ACharacterBase::ACharacterBase()
@@ -12,6 +13,11 @@ ACharacterBase::ACharacterBase()
 	weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
 	weapon->SetupAttachment(GetMesh(), FName("WeaponHandsSocket"));
 	weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
+FVector ACharacterBase::GetCombatSocketLocation()
+{
+	return ICombatInterface::GetCombatSocketLocation();
 }
 
 // Called when the game starts or when spawned
@@ -36,6 +42,14 @@ void ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GE, float le
 	
 
 }
+
+void ACharacterBase::AddCharacterAbilities()
+{
+	if (!HasAuthority()) return;
+	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	AuraASC->AddCharacterAbilities(StartupAbilities);
+}
+
 void ACharacterBase::InitializeAttributes()
 {
 	ApplyEffectToSelf(DefaultPrimaryAttribute,1.f);

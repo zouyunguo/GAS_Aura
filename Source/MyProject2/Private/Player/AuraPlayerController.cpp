@@ -2,9 +2,13 @@
 
 
 #include "Player/AuraPlayerController.h"
+
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Interface/IEnemyInterface.h"
+#include "Input/AuraEnhancedInputComponent.h"
 AAuraPlayerController::AAuraPlayerController()
 {
 
@@ -39,9 +43,13 @@ void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-
+	UAuraInputComponent* EnhancedInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
+	
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::move);
+	EnhancedInputComponent->BindAbilityActions(InputConfig, this,
+		&ThisClass::AbilityInputTagPressed,
+		&ThisClass::AbilityInputTagReleased,
+		&ThisClass::AbilityInputTagHeld);
 }
 void AAuraPlayerController::move(const FInputActionValue& Value)
 {
@@ -81,4 +89,31 @@ void AAuraPlayerController::cursurTrace()
 	else if (lastActor && !currentActor) {
 		lastActor->UnHighlight();
 	}
+}
+
+void AAuraPlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	GetASC();
+}
+
+void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{	
+	if (!GetASC())return;
+	GetASC()->AbilityInputTagReleased(InputTag);
+}
+
+void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	if (!GetASC())return;
+	GetASC()->AbilityInputTagHeld(InputTag);
+}
+
+UAuraAbilitySystemComponent* AAuraPlayerController::GetASC()
+{
+	if (!AbilitySystemComponent)
+	{
+		AbilitySystemComponent=	Cast<UAuraAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn()));
+		
+	}
+	return AbilitySystemComponent;
 }

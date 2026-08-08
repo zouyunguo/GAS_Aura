@@ -61,6 +61,7 @@ public:
 	virtual void PostGameplayEffectExecute(const struct FGameplayEffectModCallbackData& Data) override;
 	//setting function to bind when health is replicated
 
+	//模板函数， TStaticFuncPtr<T()>是一个返回值为T,实参为（）内的静态函数。
 	template<class T>
 	using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 
