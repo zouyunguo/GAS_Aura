@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
+class USplineComponent;
 class UAuraInputConfig;
 struct FGameplayTag;
 class UInputAction;
@@ -55,4 +56,20 @@ private:
 	TObjectPtr<UAuraAbilitySystemComponent> AbilitySystemComponent;
 	
 	UAuraAbilitySystemComponent* GetASC();
+	
+	
+	/* Click to Move */
+	FVector CachedDestination = FVector::ZeroVector;
+	float FollowTime = 0.f;
+	float ShortPressThreshold = 0.5f;
+	bool bAutoRunning = false;
+	bool bTargeting = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	float AutoRunAcceptanceRadius = 50.f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USplineComponent> Spline;
+
+	void AutoRun();
 };

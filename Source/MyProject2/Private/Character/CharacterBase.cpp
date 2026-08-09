@@ -17,7 +17,7 @@ ACharacterBase::ACharacterBase()
 
 FVector ACharacterBase::GetCombatSocketLocation()
 {
-	return ICombatInterface::GetCombatSocketLocation();
+	return weapon->GetSocketLocation(WeaponTipSocketName);
 }
 
 // Called when the game starts or when spawned
