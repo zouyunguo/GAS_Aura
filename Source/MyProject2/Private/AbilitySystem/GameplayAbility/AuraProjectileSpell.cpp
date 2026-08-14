@@ -12,7 +12,11 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	// Projectiles are replicated actors; only spawn on the server.
+	
+}
+
+void UAuraProjectileSpell::SpawnProjectile()
+{// Projectiles are replicated actors; only spawn on the server.
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
 
@@ -29,7 +33,7 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		FTransform SpawnTransform;
 		SpawnTransform.SetLocation(SocketLocation);
 		// TODO (Section 11): set rotation toward the mouse target using Target Data.
-
+		
 		if (AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
 			ProjectileClass,
 			SpawnTransform,
