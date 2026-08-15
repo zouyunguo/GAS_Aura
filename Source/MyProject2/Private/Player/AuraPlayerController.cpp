@@ -11,6 +11,7 @@
 #include "NavigationSystem.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
+#include "Evaluation/IMovieSceneEvaluationHook.h"
 #include "Interface/IEnemyInterface.h"
 #include "Input/AuraEnhancedInputComponent.h"
 AAuraPlayerController::AAuraPlayerController()
@@ -53,6 +54,8 @@ void AAuraPlayerController::SetupInputComponent()
 	UAuraInputComponent* EnhancedInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	
 	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AAuraPlayerController::move);
+	EnhancedInputComponent->BindAction(ShiftAction,ETriggerEvent::Started,this,&AAuraPlayerController::shiftPressed);
+	EnhancedInputComponent->BindAction(ShiftAction,ETriggerEvent::Completed,this,&AAuraPlayerController::shiftReleased);
 	EnhancedInputComponent->BindAbilityActions(InputConfig, this,
 		&ThisClass::AbilityInputTagPressed,
 		&ThisClass::AbilityInputTagReleased,
@@ -110,7 +113,7 @@ void AAuraPlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
 
 	if (GetASC()) GetASC()->AbilityInputTagReleased(InputTag);
 
-	if (!bTargeting)
+	if (!bTargeting&&!bshiftPressed)
 	{
 		const APawn* ControlledPawn = GetPawn();
 		//如果左键短按，则执行自动寻路
@@ -145,7 +148,7 @@ void AAuraPlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
 		return;
 	}
 	//如果左键点击目标，也激活技能
-	if (bTargeting)
+	if (bTargeting||bshiftPressed)
 	{
 		if (GetASC()) GetASC()->AbilityInputTagHeld(InputTag);
 	}

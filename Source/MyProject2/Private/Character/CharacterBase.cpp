@@ -5,11 +5,19 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AI/NavigationModifier.h"
+#include "Components/CapsuleComponent.h"
+#include "MyProject2/MyProject2.h"
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
+	
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Camera,ECR_Ignore);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile,ECR_Overlap);
+	GetMesh()->SetGenerateOverlapEvents(true);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
 	weapon = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Weapon"));
 	weapon->SetupAttachment(GetMesh(), FName("WeaponHandsSocket"));
 	weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);

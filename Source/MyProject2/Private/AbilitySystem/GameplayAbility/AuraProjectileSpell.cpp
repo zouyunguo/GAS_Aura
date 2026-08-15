@@ -2,6 +2,8 @@
 
 #include "AbilitySystem/GameplayAbility/AuraProjectileSpell.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Actor/AuraProjectile.h"
 #include "Interface/CombatInterface.h"
 
@@ -15,35 +17,51 @@ void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	
 }
 
-void UAuraProjectileSpell::SpawnProjectile()
-{// Projectiles are replicated actors; only spawn on the server.
+void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocation)
+{
+	// 投射物是复制 Actor，只在服务端生成。
 	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
 	if (!bIsServer) return;
 
-	if (!ProjectileClass)
-	{
-		UE_LOG(LogTemp, Error, TEXT("%s: ProjectileClass is not set! Assign it in the ability Blueprint."), *GetName());
-		return;
-	}
-
 	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetAvatarActorFromActorInfo());
-	if (CombatInterface)
-	{
-		const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
-		FTransform SpawnTransform;
-		SpawnTransform.SetLocation(SocketLocation);
-		// TODO (Section 11): set rotation toward the mouse target using Target Data.
-		
-		if (AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
-			ProjectileClass,
-			SpawnTransform,
-			GetOwningActorFromActorInfo(),
-			Cast<APawn>(GetOwningActorFromActorInfo()),
-			ESpawnActorCollisionHandlingMethod::AlwaysSpawn))
-		{
-			// TODO (Section 11): give the projectile a GameplayEffectSpecHandle for damage.
+	if (CombatInterface == nullptr) return;
 
-			Projectile->FinishSpawning(SpawnTransform);
-		}
+	const FVector SocketLocation = CombatInterface->GetCombatSocketLocation();
+
+	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	Rotation.Pitch = 0.f;   // 保持水平飞行；想要抛物线可去掉这行并调 GravityScale
+
+	FTransform SpawnTransform;
+	SpawnTransform.SetLocation(SocketLocation);
+	SpawnTransform.SetRotation(Rotation.Quaternion());
+
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	
+	AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+		ProjectileClass,
+		SpawnTransform,
+		AvatarActor,
+		Cast<APawn>(AvatarActor),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+	// 在 FinishSpawning 之前把伤害 Spec 交给投射物：命中时它直接 apply，
+	// 不需要再回头找施法者（施法者可能已经死亡/销毁）。
+	UAbilitySystemComponent* SourceASC =
+		UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo());
+
+	if (SourceASC && DamageEffectClass)
+	{
+		FGameplayEffectContextHandle EffectContextHandle = SourceASC->MakeEffectContext();
+		EffectContextHandle.SetAbility(this);
+		EffectContextHandle.AddSourceObject(Projectile);
+
+		const FGameplayEffectSpecHandle SpecHandle =
+			SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
+
+		// 第 13 章会在这里用 SetByCaller 按伤害类型注入数值。
+		Projectile->DamageEffectSpecHandle = SpecHandle;
 	}
+
+	Projectile->FinishSpawning(SpawnTransform);
 }
+

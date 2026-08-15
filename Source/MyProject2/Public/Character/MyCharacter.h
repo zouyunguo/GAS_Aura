@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Character/CharacterBase.h"
+#include "UI/Widget/AuraUserWidget.h"
 #include "MyCharacter.generated.h"
 
 /**
@@ -25,6 +26,8 @@ public:
 	virtual void OnRep_PlayerState() override;
 	
 	virtual int32 GetPlayerLevel() override;
+	
+
 	
 	protected:
 	virtual void InitAbilityActorInfo() override;
