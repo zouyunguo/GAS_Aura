@@ -7,6 +7,7 @@
 #include "GameplayTagContainer.h"
 #include "AttributeInfo.generated.h"
 
+//用于给attributemenu提供属性的相关信息
 USTRUCT(BlueprintType)
 struct FAuraAttributeInfo
 {

@@ -23,7 +23,7 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 	check(AttributeInfo);
 
 	for (auto& Pair : AS->TagsToAttributes)
-	{
+	{	//为每一个属性变化的委托添加回调函数
 		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
 			[this, Pair](const FOnAttributeChangeData& Data)
 			{

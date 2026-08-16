@@ -27,7 +27,7 @@ protected:
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
 	UPROPERTY()
-	TObjectPtr<UAttributeSet> AttributeSet;
+	TObjectPtr<UAttributeSet> AttributeSet; 
 	
 private:
 	UPROPERTY(VisibleAnywhere,ReplicatedUsing=OnRep_Level)

@@ -17,7 +17,6 @@ void UAuraAbilitySystemComponent::AddCharacterAbilities(const TArray<TSubclassOf
 	FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
 	if (const UAuraGameplayAbility* AuraAbility = Cast<UAuraGameplayAbility>(AbilitySpec.Ability))
 	{
-		// UE 5.5+ 请改用: AbilitySpec.GetDynamicSpecSourceTags().AddTag(...)
 		AbilitySpec.GetDynamicSpecSourceTags().AddTag(AuraAbility->StartupInputTag);
 		GiveAbility(AbilitySpec);
 	}

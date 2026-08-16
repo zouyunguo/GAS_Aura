@@ -3,11 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "Character/CharacterBase.h"
 #include "Interface/IEnemyInterface.h"
 #include "UI/WidgetController/OverlayWidgetController.h"
 #include "Enemy.generated.h"
 
+enum class ECharacterClass : uint8;
 class UWidgetComponent;
 class UAuraUserWidget;
 /**
@@ -44,7 +46,12 @@ virtual void InitAbilityActorInfo() override;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Character Class Defaults")
 	int32 Level=1;
 	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Character Class Defaults")
+	ECharacterClass CharacterClass= ECharacterClass::Warrior;
+	
 	void InitializeHealthBar();
+	
+	virtual void InitializeAttributes() override;
 	
 
 

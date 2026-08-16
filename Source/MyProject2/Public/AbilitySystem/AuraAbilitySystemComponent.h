@@ -25,6 +25,7 @@ class MYPROJECT2_API UAuraAbilitySystemComponent : public UAbilitySystemComponen
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
 protected:
+	//这个函数绑定的委托只在服务端发送，因此客户端想收到必须要使用client关键字让服务端发送rpc到客户端
 	UFUNCTION(Client,Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle);
 };

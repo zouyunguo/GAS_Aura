@@ -48,7 +48,7 @@ protected:
 	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
 	UPROPERTY(BlueprintReadOnly,EditAnywhere,Category="Attributes")
 	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
-	void InitializeAttributes();
+	virtual void InitializeAttributes();
 	
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GE, float level);
 	
