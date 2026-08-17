@@ -7,6 +7,7 @@
 #include "AI/NavigationModifier.h"
 #include "Components/CapsuleComponent.h"
 #include "MyProject2/MyProject2.h"
+#include "UI/Widget/DamageTextComponent.h"
 // Sets default values
 ACharacterBase::ACharacterBase()
 {
@@ -22,6 +23,43 @@ ACharacterBase::ACharacterBase()
 	weapon->SetupAttachment(GetMesh(), FName("WeaponHandsSocket"));
 	weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
+
+
+
+void ACharacterBase::MulticastHandleDeath_Implementation()
+{// 武器 ragdoll
+	weapon->SetSimulatePhysics(true);
+	weapon->SetEnableGravity(true);
+	weapon->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+	// 角色 ragdoll
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetEnableGravity(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+
+	// 尸体不再挡路，也不再被火球命中
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Ignore);
+
+	
+	Dissolve();
+	/*bDead = true;*/
+}
+
+void ACharacterBase::Die()
+{
+	// 武器脱手，改为物理模拟掉在地上
+	weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+	MulticastHandleDeath();
+}
+
+UAnimMontage* ACharacterBase::GetHitReactMontage_Implementation()
+{
+	return HitReactMontage;
+}
+
+
 
 FVector ACharacterBase::GetCombatSocketLocation()
 {
@@ -56,6 +94,18 @@ void ACharacterBase::AddCharacterAbilities()
 	if (!HasAuthority()) return;
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	AuraASC->AddCharacterAbilities(StartupAbilities);
+}
+
+void ACharacterBase::Dissolve()
+{
+	if (IsValid(DissolveMaterialInstance))
+	{
+		UMaterialInstanceDynamic* dynamicInstance= UMaterialInstanceDynamic::Create(DissolveMaterialInstance,this);
+		GetMesh()->SetMaterial(0,dynamicInstance);
+		StartDissolveTimeline(dynamicInstance);
+		
+	}
+
 }
 
 void ACharacterBase::InitializeAttributes()

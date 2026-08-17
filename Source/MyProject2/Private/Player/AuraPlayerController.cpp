@@ -12,8 +12,11 @@
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "Components/SplineComponent.h"
 #include "Evaluation/IMovieSceneEvaluationHook.h"
+#include "GameFramework/Character.h"
 #include "Interface/IEnemyInterface.h"
 #include "Input/AuraEnhancedInputComponent.h"
+#include "UI/Widget/DamageTextComponent.h"
+
 AAuraPlayerController::AAuraPlayerController()
 {
 	bReplicates = true;
@@ -26,6 +29,22 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	cursurTrace();
 	AutoRun();
 }
+
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+{
+	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
+	{
+		UDamageTextComponent* DamageText =
+			NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
+		DamageText->RegisterComponent();
+		DamageText->AttachToComponent(TargetCharacter->GetRootComponent(),
+			FAttachmentTransformRules::KeepRelativeTransform);
+		// 立刻脱离：让飘字停在原地，不跟着角色跑
+		DamageText->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+		DamageText->SetDamageText(DamageAmount);
+	}
+}
+
 void AAuraPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

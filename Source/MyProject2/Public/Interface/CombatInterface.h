@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "CombatInterface.generated.h"
 
+class UDamageTextComponent;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI,BlueprintType)
 class UCombatInterface : public UInterface
@@ -26,7 +27,16 @@ public:
 	
 	virtual FVector GetCombatSocketLocation();
 	
+
+	virtual void Die() = 0;
+	
 	UFUNCTION(
 		BlueprintImplementableEvent,BlueprintCallable)
 	void UpdateFacingTarget(const FVector& FacingTarget);
+	
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	UAnimMontage* GetHitReactMontage();
+	
+
+
 };

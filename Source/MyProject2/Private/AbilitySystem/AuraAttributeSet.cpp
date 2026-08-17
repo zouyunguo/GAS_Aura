@@ -6,9 +6,16 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"
+#include "FractureEditorModeToolkit.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
+#include "Interface/CombatInterface.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/AuraPlayerController.h"
+
+class AAuraPlayerController;
+
 UAuraAttributeSet::UAuraAttributeSet()
 {
 	InitHealth(50.f);
@@ -95,6 +102,43 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const struct FGameplayEffectMo
 	if (Data.EvaluatedData.Attribute== GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(),0.f,GetMaxMana()));
+	}
+	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
+	{
+		const float LocalIncomingDamage = GetIncomingDamage();
+		SetIncomingDamage(0.f);   // 元属性用完立刻清零，它只是个信使
+
+		if (LocalIncomingDamage > 0.f)
+		{
+			const float NewHealth = GetHealth() - LocalIncomingDamage;
+			SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+
+			const bool bFatal = NewHealth <= 0.f;
+			
+			if (bFatal)
+			{
+				if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(props.TargetAvatarActor))
+				{
+					CombatInterface->Die();
+				}
+			}
+			else
+			{
+				// 受击硬直用"施加一个带 tag 的 GE"来触发，而不是直接调函数，
+				// 这样霸体/免疫之类的机制可以用 tag 拦截。
+				FGameplayTagContainer TagContainer;
+				TagContainer.AddTag(FAuraGameplayTags::GetSingleton().Effects_HitReact);
+				props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+			}
+			
+			if (props.SourceCharacter == props.TargetCharacter) return;
+
+			if (AAuraPlayerController* AuraPC = Cast<AAuraPlayerController>(props.SourceCharacter->GetController()))
+			{
+				AuraPC->ShowDamageNumber(LocalIncomingDamage, props.TargetCharacter);
+			}
+			
+		}
 	}
 }
 
@@ -202,7 +246,7 @@ void UAuraAttributeSet::SetEffectProperties(const struct FGameplayEffectModCallb
 		}
 		if (props.SourceController)
 		{
-			ACharacter* SourceCharacter = Cast<ACharacter>(props.SourceController->GetPawn());
+			props.SourceCharacter = Cast<ACharacter>(props.SourceController->GetPawn());
 		}
 	}
 

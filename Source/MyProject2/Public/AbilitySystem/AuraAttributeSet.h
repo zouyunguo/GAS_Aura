@@ -147,7 +147,17 @@ public:
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana);
 	
-
+	/**
+	 *  Meta Attributes
+	 *
+	 *  元属性：只在服务端存在，不复制、不加进 GetLifetimeReplicatedProps、
+	 *  不显示给玩家。它是"伤害"这个概念的临时载体 —— GE 改的是它，
+	 *  PostGameplayEffectExecute 再把它翻译成实际的 Health 变化。
+	 */
+	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
+	FGameplayAttributeData IncomingDamage;
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
+	
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 

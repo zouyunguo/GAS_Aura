@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
+class UDamageTextComponent;
 class USplineComponent;
 class UAuraInputConfig;
 struct FGameplayTag;
@@ -23,11 +24,22 @@ class MYPROJECT2_API AAuraPlayerController : public APlayerController
 public:
 	AAuraPlayerController();
 	virtual void PlayerTick(float DeltaTime) override;
+	
+	/**
+ * 飘字。用 Client RPC 而非 Multicast —— 伤害数字只该给打出这一下的
+ * 玩家看，Multicast 会让所有人屏幕上飘满别人的数字。
+ */
+	UFUNCTION(Client, Reliable)
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+
 protected:
 	virtual void BeginPlay() override;
 
 	virtual void SetupInputComponent() override;
 private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+	
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<UInputMappingContext> AuraContext;
 	

@@ -22,8 +22,19 @@ public:
 	ACharacterBase();
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+
+	UFUNCTION(NetMulticast,Reliable)
+	virtual void MulticastHandleDeath();
+	/** ICombatInterface —— 只在服务端被调用（PostGameplayEffectExecute 里）。 */
+	virtual void Die() override;
 	
+	virtual UAnimMontage* GetHitReactMontage_Implementation() override;
+
 	virtual FVector GetCombatSocketLocation() override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Damage Text")
+	TSubclassOf<UDamageTextComponent> DamageTextComponentClass;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -56,6 +67,19 @@ protected:
 
 	void AddCharacterAbilities();
 	
+	void Dissolve();
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartDissolveTimeline(UMaterialInstanceDynamic* DynamicInstance);
+	
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
+	TObjectPtr<UMaterialInstance> DissolveMaterialInstance;
+	
+
+	
 	UPROPERTY(EditAnywhere,Category="Abilities")
 	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	
+	UPROPERTY(EditAnywhere,Category="Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 };

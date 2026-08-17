@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "AuraPlayerState.h"
 #include "AbilitySystem/Data/CharacterClassInfo.h"
+#include "AbilitySystem/GameplayAbility/AuraGameplayAbility.h"
 #include "Game/AuraGameModeBase.h"
 #include "UI/HUD/AuraHUD.h"
 #include "UI/WidgetController/AuraWidgetController.h"
@@ -64,4 +65,17 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributes(const UObject* World
 	FGameplayEffectSpecHandle VitalAttributeHandle=ASC->MakeOutgoingSpec(ClassInfo->VitalAttributes,level,PrimaryAttributeContextHandle);
 	ASC->ApplyGameplayEffectSpecToSelf(*VitalAttributeHandle.Data.Get());
 	
+}
+
+void UAuraAbilitySystemLibrary::GiveStartUpAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC)
+{
+	AAuraGameModeBase* AuraGameMode=Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));	
+	if (!AuraGameMode)return;
+	
+	UCharacterClassInfo* ClassInfo=AuraGameMode->CharacterClassInfo;
+	for (auto AbilityClass: ClassInfo->CommonAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
+		ASC->GiveAbility(AbilitySpec);
+	}
 }

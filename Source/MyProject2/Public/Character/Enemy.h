@@ -32,6 +32,9 @@ public:
 	
 	virtual void BeginPlay() override;
 	
+	/** 覆盖以便隐藏血条并在若干秒后清理尸体。 */
+	virtual void Die() override;
+	
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> healthBar;
 	
@@ -41,6 +44,16 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
+	
+	UPROPERTY(BlueprintReadOnly,Category="combat")
+	bool bHitReacting;
+	
+	UPROPERTY(BlueprintReadOnly,Category="combat")
+	float BaseWalkSpeed=250.f;
+	float LifeSpanAfterDeath=5.f;
+	
+	
+	void HitReactTagChanged(const FGameplayTag callbackTag,int32 newCount);
 protected:
 virtual void InitAbilityActorInfo() override;
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Character Class Defaults")

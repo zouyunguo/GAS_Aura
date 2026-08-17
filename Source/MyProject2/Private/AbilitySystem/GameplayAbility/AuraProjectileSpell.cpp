@@ -4,6 +4,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interface/CombatInterface.h"
 
@@ -57,7 +58,12 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 
 		const FGameplayEffectSpecHandle SpecHandle =
 			SourceASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), EffectContextHandle);
-
+		
+		// SetByCaller：把本次施法的伤害数值塞进 Spec，ExecCalc_Damage 会
+		// 用同一个 tag 取出来。两边 tag 必须完全一致，否则伤害恒为 0。
+		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+			SpecHandle, FAuraGameplayTags::GetSingleton().Damage, ScaledDamage);
 		// 第 13 章会在这里用 SetByCaller 按伤害类型注入数值。
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 	}
