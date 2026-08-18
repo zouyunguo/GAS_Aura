@@ -87,6 +87,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 void AAuraProjectile::Destroyed()
 {
+	//如果客户端收到destroyed要求而本地onoverlap还没触发（网络或者插值判断未集中），则先执行击中效果，然后销毁
 	if (!bHit && !HasAuthority())
 	{
 		if (ImpactSound)

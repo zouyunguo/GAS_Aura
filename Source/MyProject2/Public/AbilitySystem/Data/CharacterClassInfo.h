@@ -47,6 +47,10 @@ class MYPROJECT2_API UCharacterClassInfo : public UDataAsset
 	UPROPERTY(EditDefaultsOnly,Category="Common Class Defaults")
 	TArray<TSubclassOf<UGameplayAbility>> CommonAbilities;
 	
+	/** 曲线行名必须是 ArmorPenetration / EffectiveArmor / CriticalHitResistance。 */
+	UPROPERTY(EditDefaultsOnly,Category="Common Class Defaults")
+	TObjectPtr<UCurveTable> DamageCalculationCoefficients;
+	
 	FCharacterClassDefaultInfo GetClassDefaultInfo(ECharacterClass CharacterClass);
 	
 };

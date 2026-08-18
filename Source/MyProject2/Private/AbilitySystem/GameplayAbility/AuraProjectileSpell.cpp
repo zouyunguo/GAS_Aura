@@ -7,7 +7,7 @@
 #include "AuraGameplayTags.h"
 #include "Actor/AuraProjectile.h"
 #include "Interface/CombatInterface.h"
-
+//由于locally predicted, gameplay ability会在客户端和服务端都执行一次
 void UAuraProjectileSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                            const FGameplayAbilityActorInfo* ActorInfo,
                                            const FGameplayAbilityActivationInfo ActivationInfo,
