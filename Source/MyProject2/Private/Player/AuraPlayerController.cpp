@@ -30,9 +30,9 @@ void AAuraPlayerController::PlayerTick(float DeltaTime)
 	AutoRun();
 }
 
-void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter)
+void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, ACharacter* TargetCharacter,bool bIsblockedHit,bool bCriticalHit)
 {
-	if (IsValid(TargetCharacter) && DamageTextComponentClass && IsLocalController())
+	if (IsValid(TargetCharacter) && DamageTextComponentClass)
 	{
 		UDamageTextComponent* DamageText =
 			NewObject<UDamageTextComponent>(TargetCharacter, DamageTextComponentClass);
@@ -41,7 +41,7 @@ void AAuraPlayerController::ShowDamageNumber_Implementation(float DamageAmount, 
 			FAttachmentTransformRules::KeepRelativeTransform);
 		// 立刻脱离：让飘字停在原地，不跟着角色跑
 		DamageText->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
-		DamageText->SetDamageText(DamageAmount);
+		DamageText->SetDamageText(DamageAmount, bIsblockedHit, bCriticalHit);
 	}
 }
 

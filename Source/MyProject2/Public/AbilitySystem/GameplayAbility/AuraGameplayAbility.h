@@ -19,8 +19,5 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Input")
 	FGameplayTag StartupInputTag;
 	
-	/** 按技能等级取值的基础伤害，通过 SetByCaller 注入 GE。 */
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	FScalableFloat Damage;
 
 };

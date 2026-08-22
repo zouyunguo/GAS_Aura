@@ -4,7 +4,6 @@
 #include "Character/Enemy.h"
 
 #include "AuraGameplayTags.h"
-#include "FractureEditorModeToolkit.h"
 #include "Components/CapsuleComponent.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
@@ -12,8 +11,6 @@
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "UI/Widget/AuraUserWidget.h"
-#include "UI/Widget/DamageTextComponent.h"
-#include "UI/WidgetController/AuraWidgetController.h"
 
 void AEnemy::Highlight()
 {
@@ -55,8 +52,13 @@ void AEnemy::Die()
 void AEnemy::InitAbilityActorInfo()
 {	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AbilityActorInfoSet();
-	InitializeAttributes();  
-	UAuraAbilitySystemLibrary::GiveStartUpAbilities(this,AbilitySystemComponent);
+ 
+	if (HasAuthority())
+	{	
+		InitializeAttributes(); 
+		UAuraAbilitySystemLibrary::GiveStartUpAbilities(this,AbilitySystemComponent);
+
+	}
 }
 
 void AEnemy::InitializeHealthBar()

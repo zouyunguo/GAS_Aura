@@ -30,7 +30,7 @@ public:
  * 玩家看，Multicast 会让所有人屏幕上飘满别人的数字。
  */
 	UFUNCTION(Client, Reliable)
-	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter);
+	void ShowDamageNumber(float DamageAmount, ACharacter* TargetCharacter,bool bIsblockedHit,bool bCriticalHit);
 
 protected:
 	virtual void BeginPlay() override;

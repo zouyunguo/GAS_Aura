@@ -67,13 +67,14 @@ void UAuraProjectileSpell::SpawnProjectile(const FVector& ProjectileTargetLocati
 		
 		// SetByCaller：把本次施法的伤害数值塞进 Spec，ExecCalc_Damage 会
 		// 用同一个 tag 取出来。两边 tag 必须完全一致，否则伤害恒为 0。
-		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
-			SpecHandle, FAuraGameplayTags::GetSingleton().Damage, ScaledDamage);
-		// 第 13 章会在这里用 SetByCaller 按伤害类型注入数值。
+		for (TTuple<FGameplayTag, FScalableFloat>& Pair : DamageTypes)
+		{
+			const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(
+				SpecHandle, Pair.Key, ScaledDamage);
+		}
 		Projectile->DamageEffectSpecHandle = SpecHandle;
 	}
-
 	Projectile->FinishSpawning(SpawnTransform);
 }
 

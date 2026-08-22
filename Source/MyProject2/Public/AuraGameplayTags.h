@@ -41,6 +41,25 @@ static void InitializeNativeGameplayTags();
 	
 	FGameplayTag Damage;
 	
+	
+	/* Damage Types */
+	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Lightning;
+	FGameplayTag Damage_Arcane;
+	FGameplayTag Damage_Physical;
+	/* Resistances */
+	FGameplayTag Attributes_Resistance_Fire;
+	FGameplayTag Attributes_Resistance_Lightning;
+	FGameplayTag Attributes_Resistance_Arcane;
+	FGameplayTag Attributes_Resistance_Physical;
+
+	/**
+	 * 伤害类型 -> 对应抗性属性的映射。
+	 * ExecCalc 遍历它来逐类型结算，加新元素时只需在这里注册一行。
+	 */
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
+
+	
 	/* Effects */
 	FGameplayTag Effects_HitReact;
 protected:

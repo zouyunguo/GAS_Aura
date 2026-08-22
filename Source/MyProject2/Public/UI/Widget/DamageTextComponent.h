@@ -15,5 +15,5 @@ class MYPROJECT2_API UDamageTextComponent : public UWidgetComponent
 	GENERATED_BODY()
 public:
 	UFUNCTION(BlueprintImplementableEvent,BlueprintCallable)
-	void SetDamageText(float DamageText);
+	void SetDamageText(float DamageText,bool bIsblockedHit,bool bCriticalHit);
 };
